@@ -143,10 +143,6 @@ where id_tipo_produto = 3;
 select * from lanchonete.tipo_produto;
 -- id = 3
 
-
-
-
-
 -- b) Altere o nome do cliente Luis para Luis Claudio e 
 -- seu telefone para 9966-6667
 -- id = 6
@@ -161,22 +157,74 @@ where id = 6;
 
 
 
--- c) Insira o produto Lasanha no cardápio, ao preço de $ 25,00 e efetue o pedido deste item para o
--- cliente Luis Claudio, no dia 15/11/2018 junto com um refrigerante de 1L.
+-- c) Insira o produto Lasanha no cardápio, ao preço de $ 25,00 e 
+-- efetue o pedido deste item para o
+-- cliente Luis Claudio, no dia 15/11/2018 
+-- junto com um refrigerante de 1L.
+
+insert into lanchonete.produto 
+(descricao, valor, id_tipo_produto)
+values ('Lasanha',25, 2);
+
+insert into lanchonete.pedido (data, id_cliente)
+values ('2018-11-15',6);
+
+insert into lanchonete.itens_pedido 
+(id_pedido, id_produto, quantidade, valor)
+values 
+(9, 11, 1, 25),
+(9, 1, 1, 6.5);
 
 
 
 
+--  Liste o nome do produto, tipo do produto, valor
+
+select 
+	p.descricao as produto,
+	tp.descricao as tipo,
+	p.valor as valor
+from lanchonete.produto p 
+inner join lanchonete.tipo_produto tp on tp.id=p.id_tipo_produto;
+
+
+select 
+	produto.descricao,
+	tipo_produto.descricao,
+	produto.valor
+from produto, tipo_produto
+where produto.id_tipo_produto  = tipo_produto.id 
+
+
+-- Liste o código do pedido, o nome do cliente, 
+-- a data do pedido e o total do pedido
+
+select 
+	p.id as codigo,
+	c.nome as nome_cliente,
+	p.data as data_pedido,
+	sum(quantidade * valor)   as total_pedido
+	from lanchonete.pedido p
+inner join lanchonete.cliente c on p.id_cliente=c.id
+inner join lanchonete.itens_pedido ip on ip.id_pedido=p.id
+group by p.id, c.nome, p.data
+order by codigo;
 
 
 
+-- Liste o código do pedido, 
+-- a descrição do produto, 
+-- o valor do produto, 
+-- a quantidade 
+-- e o total do produto (valor*quantidade) para cada item
 
-
-
-
-
-
-
-
-
+select 
+	p.id as codigo,
+	p2.descricao as descricao_produto,
+	ip.valor as  valor_produto,
+	ip.quantidade as quantidade,
+	ip.valor * ip.quantidade as total_produto
+from lanchonete.pedido p 
+inner join lanchonete.itens_pedido ip on ip.id_pedido=p.id
+inner join lanchonete.produto p2 on p2.id = ip.id_produto;
 
